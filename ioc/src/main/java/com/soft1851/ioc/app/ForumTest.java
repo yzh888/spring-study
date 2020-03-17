@@ -14,7 +14,7 @@ import javax.lang.model.AnnotatedConstruct;
  */
 public class ForumTest {
     public static void main(String[] args) {
-        //获取
+        //生成基于注解配置的应用上下文对象
         AnnotationConfigApplicationContext ctx =
                 new AnnotationConfigApplicationContext(AppConfig.class);
         //scan手动扫包
