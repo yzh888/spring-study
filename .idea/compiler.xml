@@ -8,9 +8,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="ioc" />
+        <module name="orm" />
         <module name="web" />
         <module name="aop" />
-        <module name="orm" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="11" />
