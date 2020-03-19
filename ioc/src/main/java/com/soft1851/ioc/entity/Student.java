@@ -1,7 +1,5 @@
 package com.soft1851.ioc.entity;
 
-import lombok.Data;
-
 import java.util.List;
 
 /**

@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="ioc" />
+        <module name="web" />
         <module name="aop" />
         <module name="orm" />
       </profile>

@@ -1,59 +1,80 @@
-# 关于Spring的配置和注解说明
-### 1. 关于xml方式来做bean的配置
-- <bean>标签的使用注意:id class
-- 构造器注入:ref引用其他对象
-- setter注入: property或p:简写形式
-### 2. 两种方式获取xml中的bean
-- Application得到上下文， ac.getBean("bean id名称"),再main方法中使用
-- @Autowired注解，单元测试使用，注解命名规范
-### 3. 基础Java类来做bean的配置（主流，常用，为了减少xml）
-- 配置类要加上@Configuration
-- 配置中配置bean的方法，要加上@Bean注解
-```$xslt
-@Bean
-    public Forum forum() {
-        return new Forum();
+## IOC模块
+### 一、构成
+#### 1. xml配置版
+#### 2. 注解配置版
+
+### 二、实例
+##### 1. xml配置版实例：
+- 定义：
+```
+<bean id="student" class="com.soft1851.ioc.entity.Student">
+    <property name="name" value="颜子皓" />
+    <property name="phone" ref="phone" />
+    <property name="phones">
+        <list>
+           <ref bean="phone" />
+        </list>
+    </property>
+</bean>
+```
+- main方法中测试：
+``` 
+  ApplicationContext ac = new ClassPathXmlApplicationContext("beans.xml");
+  User user = (User) ac.getBean("user");
+```
+- 测试类中测试:
+```
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "/beans.xml")
+public class StudentTest {
+    @Autowired
+    private Student student;
+
+    @Test
+    public void test() {
+        System.out.println(student);
     }
+}
 ```
-### 4. 如何再SpringFramework中获得Java类配置的bean?
-- main 
-```$xslt
-//生成基于注解配置的应用上下文对象
-        AnnotationConfigApplicationContext ctx =
-                new AnnotationConfigApplicationContext(AppConfig.class);
-        //scan手动扫包
-        ctx.scan("com.soft1851.ioc.config");
-        Forum forum = (Forum) ctx.getBean("forum");
-        forum.setForumId(2);
-        forum.setForumName("老颜");
-        System.out.println(forum);
+##### 2.注解版配置示例
+- 定义：
 ```
-- 单元测试
-> 注意再xml配置文件中手动开启扫包
-```$xslt
-<context:component-scan base-package="com.soft1851.ioc.config"/>
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public Student student(){
+        return new Student();
+    }
+}
 ```
-### 5. Spring集成JDBC步骤
-- 在resources文件夹下新建db.properties文件
-- 在db.properties文件中写入数据库驱动，账户密码
-```$xslt
-jdbc.driverClassName=com.mysql.jdbc.Driver
-jdbc.url=jdbc:mysql://localhost:3306/db_java_basic?useUnicode=true&characterEncoding=utf8&useSSL=false&autoReconnect=true
-jdbc.username=root
-jdbc.password=root
+- main方法中测试：
 ```
-- 新建一个application.xml文件，开启注解扫描（项目包/数据库包），只要带注解都可以扫到，导入数据库的信息
-- 使用bean配置数据源，开启数据源，配置jdbc模板
-```$xslt
-<context:property-placeholder location="db.properties"/>
-    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init">
-        <property name="driverClassName" value="${jdbc.driverClassName}"/>
-        <property name="url" value="${jdbc.url}"/>
-        <property name="username" value="${jdbc.username}"/>
-        <property name="password" value="${jdbc.password}"/>
-        <property name="initialSize" value="8"/>
-    </bean>
-    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
+ AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(JDbcConfig.class);
+ //scan手动扫包
+ ctx.scan("com.soft1851.ioc.config");
+ Student student = ctx.getBean("student") 
+``` 
+- 测试类中测试：
+
+### 三、注意点
+##### 1.xml配置版中依赖注入有两种方法：
+一是通过构造器注入，即
 ```
+<constructor-arg>
+    <set>
+         <ref bean="phone" />
+         <ref bean="phone1" />
+    </set>
+</constructor-arg>
+```
+而是通过set方法注入，即
+```
+<property name="name" value="颜子皓" />
+```
+或
+```
+<bean id="phone" class="com.soft1851.ioc.entity.Phone" p:name="诺基亚" p:price="9.99" />
+```
+##### 2. 注解版配置
+在config注解类中头部一定要有@Configuration注解
